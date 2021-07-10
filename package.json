@@ -1,0 +1,25 @@
+{
+  "name": "dma-store",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "repository": "https://github.com/undyingwraith/dag-media-archive",
+  "author": "undyingwraith",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "jest",
+    "gen-docs": "yarn build && node ./node_modules/jsdoc/jsdoc.js -c ./.jsdoc.conf.json"
+  },
+  "dependencies": {
+    "cids": "^1.1.7"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "ipfs-http-client": "^50.1.2",
+    "jest": "^27.0.6",
+    "jsdoc": "^3.6.7",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.5"
+  }
+}
