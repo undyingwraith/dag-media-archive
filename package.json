@@ -1,10 +1,17 @@
 {
-  "name": "dma-store",
+  "name": "@undyingwraith/dag-media-archive",
   "version": "0.1.0",
   "main": "dist/index.js",
   "license": "MIT",
-  "repository": "https://github.com/undyingwraith/dag-media-archive",
-  "author": "undyingwraith",
+  "description": "dag-media-archive",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/undyingwraith/dag-media-archive"
+  },
+  "author": {
+    "name": "undyingwraith",
+    "email": "undyingwraith@outlook.com"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
@@ -21,5 +28,8 @@
     "jsdoc": "^3.6.7",
     "ts-jest": "^27.0.3",
     "typescript": "^4.3.5"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/undyingwraith"
   }
 }
