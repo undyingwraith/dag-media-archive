@@ -1,4 +1,4 @@
-import {CID} from 'ipfs-http-client';
+import CID from 'cids';
 
 export interface IMediaEntry {
 	id: string

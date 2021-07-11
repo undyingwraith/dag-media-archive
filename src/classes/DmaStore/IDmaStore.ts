@@ -1,16 +1,10 @@
 import CID from 'cids';
-import {IArchive, IMediaEntry} from '../types';
+import {IArchive, IMediaEntry} from '../../types';
 
 /**
  *
  */
 export interface IDmaStore<T extends IMediaEntry> {
-	/**
-	 *
-	 * @param name
-	 */
-	initialize(name?: string): Promise<void>
-
 	/**
 	 *
 	 * @param media

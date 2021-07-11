@@ -1,6 +1,6 @@
-import {DmaStore} from '../index';
+import {DmaStore} from '../classes';
 import CID from 'cids';
-import Ipfs from 'ipfs-http-client';
+import Ipfs from 'ipfs-core';
 import {CONSTANTS} from './const';
 
 const node = Ipfs.create();

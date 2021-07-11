@@ -1,2 +1,2 @@
-export * from './DmaStore'
+export * from './classes'
 export * from './types'

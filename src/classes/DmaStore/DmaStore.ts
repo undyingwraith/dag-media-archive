@@ -1,29 +1,37 @@
 import CID from 'cids';
+import {IArchive, IMediaEntry} from '../../types';
 import {DmaArchive, IDmaArchive} from '../DmaArchive';
-import {IMediaEntry} from '../types';
-import {IArchive} from '../types';
 import {IDmaStore} from './IDmaStore';
 
 export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 	private archive: IDmaArchive;
 
-	constructor(private node: any, cid?: CID) {
+	private constructor(private node: any, cid?: CID) {
 		this.archive = new DmaArchive(node, cid ?? new CID('bafyriqbp63xyywdqeoij36kxnh7jwqkvrfwn2toju3o3no7jcxpopjwhw4sz5vwwl5i3zizaxbmngkwwhc6cn72wijcedqhybirp62ahgigs6'));
 	}
 
-	initialize(name = 'DmaStore'): Promise<void> {
+	static create<T extends IMediaEntry>(node: any, cid?: CID): Promise<IDmaStore<T>> {
+		if (cid) {
+			return Promise.resolve(new DmaStore(node, cid));
+		} else {
+			return new Promise((resolve, reject) => {
+				DmaStore.initialize(node).then(cid => resolve(new DmaStore(node, cid)));
+			});
+		}
+	}
+
+	static initialize(node: any, name = 'DmaStore'): Promise<CID> {
 		return new Promise((resolve, reject) => {
-			this.archive.put({}).then(cid => {
-				return this.archive.put({
-					name: name,
-					media: cid,
-					version: 1,
-				} as IArchive);
-			}).then((cid: CID) => {
-				this.archive = new DmaArchive(this.node, cid);
-				console.log('initialize', cid);
-				resolve();
-			}).catch(reject);
+			const archive = new DmaArchive(node);
+			archive.put({})
+				.then(cid => {
+					return archive.put({
+						name: name,
+						media: cid,
+						version: 1,
+					} as IArchive);
+				})
+				.catch(reject);
 		});
 	}
 

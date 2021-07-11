@@ -2,3 +2,5 @@
 /yarn-error.log
 /coverage
 /.npmrc
+/dist
+/tsconfig.tsbuildinfo

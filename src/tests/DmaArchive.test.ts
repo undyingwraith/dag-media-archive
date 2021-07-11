@@ -1,12 +1,16 @@
 import CID from 'cids';
-import Ipfs from 'ipfs-http-client';
-import {DmaArchive} from '../DmaArchive';
+import Ipfs, {IPFS} from 'ipfs-core';
+import {DmaArchive} from '../classes';
 import {CONSTANTS} from './const';
-
-const node = Ipfs.create();
 
 
 describe('DmaArchive', () => {
+	let node: IPFS;
+
+	beforeAll(async () => {
+		node = await Ipfs.create();
+	}, 10000);
+
 	it('put works', async () => {
 		const store = new DmaArchive(node, CONSTANTS.baseCid);
 		await expect(store.put({})).resolves.toStrictEqual(new CID('bafyriqdqjbhwb2nfkbchrg65ckfpwjxawewjccyneooriyma4tdoiv3doramskqyam764vpoxakku6ldeuam6o62kwozpucom6eevm4ibajzi'));

@@ -1,15 +1,16 @@
 import CID from 'cids';
-import {IArchive} from '../types';
+import {IArchive} from '../../types';
 import {IDmaArchive} from './IDmaArchive';
 
 export class DmaArchive implements IDmaArchive {
-	constructor(private node: any, private current: CID) {
+	constructor(private node: any, private current?: CID) {
 
 	}
 
 	fetch(): Promise<IArchive> {
+		if (!this.current) return Promise.reject('not initialized');
 		return new Promise((resolve, reject) => {
-			this.get(this.current).then((obj: IArchive) => {
+			this.get(this.current!).then((obj: IArchive) => {
 				resolve(obj);
 			}).catch(reject);
 		});
@@ -41,11 +42,12 @@ export class DmaArchive implements IDmaArchive {
 	}
 
 	resolve(path: string): Promise<any> {
+		if (!this.current) return Promise.reject('not initialized');
 		if (path.substr(0, 1) != '/') return Promise.reject('path must start with a "/"');
 		let remainderPath: string;
 		return new Promise((resolve, reject) => {
-			console.log('DmaArchive.resolve', `${this.current.toV1()}${path}`);
-			this.node.dag.resolve(`${this.current.toV1()}${path}`)
+			console.log('DmaArchive.resolve', `${this.current!.toV1()}${path}`);
+			this.node.dag.resolve(`${this.current!.toV1()}${path}`)
 				.then((res: IResolveResult) => {
 					console.log('resolved');
 					remainderPath = res.remainderPath;
@@ -69,16 +71,17 @@ export class DmaArchive implements IDmaArchive {
 	}
 
 	update(path: string, data: CID | any): Promise<CID> {
+		if (!this.current) return Promise.reject('not initialized');
 		if (path.substr(0, 1) != '/') return Promise.reject('path must start with a "/"');
 		return new Promise(async (resolve, reject) => {
 			if (data instanceof CID) {
 				console.debug('adding CID');
-				this.updateNext(this.current, path, data, resolve, reject);
+				this.updateNext(this.current!, path, data, resolve, reject);
 			} else {
 				console.debug('adding arbitrary data');
 				this.put(data).then((cid: CID) => {
 					console.debug('added arbitrary data', cid);
-					this.updateNext(this.current, path, cid, resolve, reject);
+					this.updateNext(this.current!, path, cid, resolve, reject);
 				}).catch(reject);
 			}
 		});
@@ -113,6 +116,7 @@ export class DmaArchive implements IDmaArchive {
 	}
 
 	export(): Promise<CID> {
+		if (!this.current) return Promise.reject('not initialized');
 		return Promise.resolve(this.current);
 	}
 }

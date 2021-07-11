@@ -1,5 +1,5 @@
 import CID from 'cids';
-import {IArchive} from '../types';
+import {IArchive} from '../../types';
 
 /**
  *
