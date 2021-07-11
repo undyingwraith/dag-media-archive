@@ -46,10 +46,8 @@ export class DmaArchive implements IDmaArchive {
 		if (path.substr(0, 1) != '/') return Promise.reject('path must start with a "/"');
 		let remainderPath: string;
 		return new Promise((resolve, reject) => {
-			console.log('DmaArchive.resolve', `${this.current!.toV1()}${path}`);
 			this.node.dag.resolve(`${this.current!.toV1()}${path}`)
 				.then((res: IResolveResult) => {
-					console.log('resolved');
 					remainderPath = res.remainderPath;
 					return this.get(res.cid);
 				})
@@ -75,12 +73,9 @@ export class DmaArchive implements IDmaArchive {
 		if (path.substr(0, 1) != '/') return Promise.reject('path must start with a "/"');
 		return new Promise(async (resolve, reject) => {
 			if (data instanceof CID) {
-				console.debug('adding CID');
 				this.updateNext(this.current!, path, data, resolve, reject);
 			} else {
-				console.debug('adding arbitrary data');
 				this.put(data).then((cid: CID) => {
-					console.debug('added arbitrary data', cid);
 					this.updateNext(this.current!, path, cid, resolve, reject);
 				}).catch(reject);
 			}
@@ -93,13 +88,10 @@ export class DmaArchive implements IDmaArchive {
 		let remainderPath: string;
 		this.node.dag.resolve(`${root.toV1()}${remainder}`)
 			.then((res: IResolveResult) => {
-				console.log('resolved', res.remainderPath, res.cid);
 				remainderPath = res.remainderPath;
 				return this.get(res.cid);
 			})
 			.then((node: any) => {
-				console.log('fetched', name, remainderPath, remainder, node);
-				//TODO: fix remainderPath
 				node[name] = current;
 				return this.put(node);
 			})

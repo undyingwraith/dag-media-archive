@@ -1,5 +1,6 @@
 import CID from 'cids';
 import {IArchive, IMediaEntry} from '../../types';
+import {ICollection} from '../../types/ICollection';
 import {DmaArchive, IDmaArchive} from '../DmaArchive';
 import {IDmaStore} from './IDmaStore';
 
@@ -31,18 +32,16 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 	 * @param name
 	 */
 	static initialize(node: any, name = 'DmaStore'): Promise<CID> {
-		return new Promise((resolve, reject) => {
-			const archive = new DmaArchive(node);
-			archive.put({})
+		const archive = new DmaArchive(node);
+		return  archive.put({})
 				.then(cid => {
 					return archive.put({
 						name: name,
 						media: cid,
+						collections: cid,
 						version: 1,
 					} as IArchive);
-				})
-				.catch(reject);
-		});
+				});
 	}
 
 	/**
@@ -65,7 +64,6 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 				archive.media = mediaListCid;
 				return this.archive.set(archive);
 			}).then((cid: CID) => {
-				console.log('writeMedia', cid);
 				resolve(cid);
 			}).catch(reject);
 		});
@@ -96,6 +94,42 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 	 * @inheritDoc
 	 */
 	getList(): Promise<T[]> {
-		return Promise.resolve([]);
+		return new Promise<T[]>((resolve, reject) => {
+			this.archive.fetch()
+				.then(archive => this.archive.get(archive.media))
+				.then(list => this.fetchAll<T>(list))
+				.then(data => {
+					resolve(data);
+				})
+				.catch(reject);
+		});
+	}
+
+	getCollections(): Promise<ICollection[]> {
+		return new Promise((resolve, reject) => {
+			this.archive.resolve('/collections')
+				.then(cid => this.archive.get(cid))
+				.then(list => this.fetchAll<ICollection>(list))
+				.then(data => {
+					resolve(data);
+				})
+				.catch(reject);
+		});
+	}
+
+	private fetchAll<T>(items: { [key: string]: CID }): Promise<T[]> {
+		return new Promise((resolve, reject) => {
+			const promises = [];
+
+			for (let item in items) {
+				promises.push(this.archive.get(items[item]));
+			}
+
+			Promise.all(promises)
+				.then((data) => {
+					resolve(data);
+				})
+				.catch(reject);
+		});
 	}
 }
