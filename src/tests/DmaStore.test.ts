@@ -1,20 +1,27 @@
-import {DmaStore} from '../classes';
+import {DmaStore, IDmaStore} from '../classes';
 import CID from 'cids';
-import Ipfs from 'ipfs-core';
+import Ipfs, {IPFS} from 'ipfs';
+import {IMediaEntry} from '../types';
 import {CONSTANTS} from './const';
 
-const node = Ipfs.create();
 
-describe('DmaStore', () => {
+describe('DmaStore write', () => {
+	let node: IPFS;
+	let store: IDmaStore<IMediaEntry>;
+
+	beforeAll(async () => {
+		node = await Ipfs.create();
+	}, 10000);
+
+	beforeEach(async () => {
+		store = await DmaStore.create(node, CONSTANTS.baseCid);
+	}, 10000);
+
 	it('init works', async () => {
-		const store = new DmaStore(node);
-		await expect(store.initialize()).resolves.toStrictEqual(undefined);
-		await expect(store.getRoot()).resolves.toMatchSnapshot();
-		await expect(store.export()).resolves.toMatchObject(CONSTANTS.baseCid);
+		await expect(DmaStore.initialize(node)).resolves.toStrictEqual(CONSTANTS.baseCid);
 	});
 
 	it('write works', async () => {
-		const store = new DmaStore(node, CONSTANTS.baseCid);
 		await expect(store.writeMedia({
 			id: 'ebb941ae-419e-4848-8664-57597ddb214e',
 			source: new CID('bafybeia2fz5fkkqmjlivj7jrlecschnkkhy2z5ced3velgpjydl2lzdglu'),
@@ -22,7 +29,6 @@ describe('DmaStore', () => {
 	});
 
 	it('consecutive write works', async () => {
-		const store = new DmaStore(node, CONSTANTS.baseCid);
 		await expect(store.writeMedia({
 			id: 'ebb941ae-419e-4848-8664-57597ddb214e',
 			source: new CID('bafybeia2fz5fkkqmjlivj7jrlecschnkkhy2z5ced3velgpjydl2lzdglu'),
@@ -32,9 +38,25 @@ describe('DmaStore', () => {
 			source: new CID('bafybeidbnognu6nvv2z7dmmtqqpqtb47ya6d3loiqsrofadxtgg7yblbui'),
 		})).resolves.toStrictEqual(CONSTANTS.baseCidWTwo);
 	});
+});
+
+describe('DmaStore read', () => {
+	let node: IPFS;
+	let store: IDmaStore<IMediaEntry>;
+
+	beforeAll(async () => {
+		node = await Ipfs.create();
+	}, 10000);
+
+	beforeEach(async () => {
+		store = await DmaStore.create(node, CONSTANTS.baseCidWTwo);
+	}, 10000);
 
 	it('read works', async () => {
-		const store = new DmaStore(node, CONSTANTS.baseCidWTwo);
 		await expect(store.readMedia('5c14df51-3d66-4389-849f-92aa04ffff61')).resolves.toMatchSnapshot();
+	});
+
+	it('getList works', async () => {
+		await expect(store.getList()).resolves.toMatchSnapshot();
 	});
 });

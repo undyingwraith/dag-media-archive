@@ -10,6 +10,11 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 		this.archive = new DmaArchive(node, cid ?? new CID('bafyriqbp63xyywdqeoij36kxnh7jwqkvrfwn2toju3o3no7jcxpopjwhw4sz5vwwl5i3zizaxbmngkwwhc6cn72wijcedqhybirp62ahgigs6'));
 	}
 
+	/**
+	 *
+	 * @param node
+	 * @param cid
+	 */
 	static create<T extends IMediaEntry>(node: any, cid?: CID): Promise<IDmaStore<T>> {
 		if (cid) {
 			return Promise.resolve(new DmaStore(node, cid));
@@ -20,6 +25,11 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 		}
 	}
 
+	/**
+	 *
+	 * @param node
+	 * @param name
+	 */
 	static initialize(node: any, name = 'DmaStore'): Promise<CID> {
 		return new Promise((resolve, reject) => {
 			const archive = new DmaArchive(node);
@@ -35,6 +45,9 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 		});
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	writeMedia(media: T): Promise<CID> {
 		return new Promise((resolve, reject) => {
 			let mediaCid: any;
@@ -58,15 +71,31 @@ export class DmaStore<T extends IMediaEntry> implements IDmaStore<T> {
 		});
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	readMedia(id: string): Promise<T> {
 		return this.archive.resolve(`/media/${id}`);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	getRoot(): Promise<IArchive> {
 		return this.archive.fetch();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	export(): Promise<CID> {
 		return this.archive.export();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	getList(): Promise<T[]> {
+		return Promise.resolve([]);
 	}
 }

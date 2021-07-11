@@ -1,5 +1,5 @@
 import CID from 'cids';
-import Ipfs, {IPFS} from 'ipfs-core';
+import Ipfs, {IPFS} from 'ipfs';
 import {DmaArchive} from '../classes';
 import {CONSTANTS} from './const';
 
