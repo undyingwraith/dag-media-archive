@@ -1,6 +1,6 @@
 import {DmaStore, IDmaStore} from '../classes';
 import CID from 'cids';
-import Ipfs, {IPFS} from 'ipfs';
+import Ipfs, {IPFS} from 'ipfs-core';
 import {IMediaEntry} from '../types';
 import {CONSTANTS} from './const';
 
